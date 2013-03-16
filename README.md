@@ -83,12 +83,6 @@ $validation_result->getErrors('errors/my_errors.php');
         <td></td>
     </tr>
     <tr>
-        <td>required</td>
-        <td>No</td>
-        <td>Returns FALSE if the input is empty</td>
-        <td></td>
-    </tr>
-    <tr>
         <td>email</td>
         <td>No</td>
         <td>Returns FALSE if the input is not a valid email address</td>
