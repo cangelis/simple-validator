@@ -1,4 +1,9 @@
 <?php
+/**
+ * Simple Validator Class for php
+ * Author: Can Geliş <geliscan@gmail.com>
+ */
+
 
 /**
  * TODO: user defined functions
