@@ -24,9 +24,9 @@ $rules = array(
 $validation_result = SimpleValidator::validate($_POST, $rules);
 if ($validation_result->isSuccess() == true) {
     echo "validation ok";
-    var_dump($validation_result->getErrors());
 } else {
     echo "validation not ok";
+    var_dump($validation_result->getErrors());
 }
 ```
 
@@ -48,7 +48,7 @@ $rules = array(
 );
 ```
 
-and you need to add a error text for your rule to the error file (default: errors/en.php).
+and you need to add an error text for your rule to the error file (default: errors/en.php).
 
 ```php
     'my_rule' => ":attribute field must be SimpleValidator"
@@ -62,6 +62,19 @@ and call ```getErrors()``` method using:
 ```php
 $validation_result->getErrors('errors/my_errors.php');
 ```
+## Naming Inputs
+
+```php
+$naming => array(
+    'name' => 'Name',
+    'url' => 'Web Site'
+);
+$validation_result = SimpleValidator::validate($_POST, $rules, $naming);
+```
+Output sample:
+
+Name field is required
+Web Site field is required
 
 ## Default validations
 
