@@ -44,7 +44,7 @@ $rules = array(
                 return true;
             return false;
         }
-    )ß
+    )
 );
 ```
 
