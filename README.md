@@ -38,11 +38,13 @@ Lambda functions make the custom validations easier to be implemented.
 
 ```php
 $rules = array(
-    'my_rule' => function($input) {
-        if ($input == "SimpleValidator")
-            return true;
-        return false;
-    }
+    'name' => array(
+        'my_rule' => function($input) {
+            if ($input == "SimpleValidator")
+                return true;
+            return false;
+        }
+    )ß
 );
 ```
 
