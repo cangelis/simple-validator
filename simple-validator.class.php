@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Simple Validator Class for php
- * Author: Can Geliş <geliscan@gmail.com>
+ * @author Can Geliş <geliscan@gmail.com>
+ * @copyright (c) 2013, Can Geliş
+ * @license https://github.com/cangelis/simple-validator/blob/master/licence.txt MIT Licence
+ * @link https://github.com/cangelis/simple-validator
  */
-
 
 /**
  * TODO: user defined functions
@@ -53,45 +56,49 @@ class SimpleValidator {
     public static function validate($inputs, $rules, $naming = null) {
         $errors = null;
         foreach ($rules as $input => $input_rules) {
-            foreach ($input_rules as $rule => $closure) {
-                $param = null;
-                /**
-                 * if the key of the $input_rules is numeric that means
-                 * it's neither a lambda nor user function.
-                 */
-                if (is_numeric($rule)) {
-                    $rule = $closure;
-                }
-                /**
-                 * if the method exists in here call it
-                 */
-                if (@method_exists('SimpleValidator', $rule)) {
-                    $validation = static::$rule(@$inputs[$input]);
-                }
+            if (is_array($input_rules)) {
+                foreach ($input_rules as $rule => $closure) {
+                    $param = null;
+                    /**
+                     * if the key of the $input_rules is numeric that means
+                     * it's neither a lambda nor user function.
+                     */
+                    if (is_numeric($rule)) {
+                        $rule = $closure;
+                    }
+                    /**
+                     * if the method exists in here call it
+                     */
+                    if (@method_exists('SimpleValidator', $rule)) {
+                        $validation = static::$rule(@$inputs[$input]);
+                    }
 
-                /**
-                 * method with a parameter
-                 * rule(parameter)
-                 * eg: max_length(9)
-                 */ else if (preg_match("#^([a-zA-Z_]+)\(([a-zA-Z0-9]+)\)$#", $rule, $matches)) {
-                    $validation = $validation = static::$matches[1](@$inputs[$input], $matches[2]);
-                    $param = $matches[2];
-                    $rule = $matches[1];
+                    /**
+                     * method with a parameter
+                     * rule(parameter)
+                     * eg: max_length(9)
+                     */ else if (preg_match("#^([a-zA-Z_]+)\(([a-zA-Z0-9]+)\)$#", $rule, $matches)) {
+                        $validation = $validation = static::$matches[1](@$inputs[$input], $matches[2]);
+                        $param = $matches[2];
+                        $rule = $matches[1];
+                    }
+                    /**
+                     * if $closure is an anonymous function
+                     * call it
+                     */ else if (get_class($closure) == 'Closure') {
+                        $validation = $closure(@$inputs[$input]);
+                    } else {
+                        throw new Exception('Unknown Rule: "' . $rule . '"');
+                    }
+                    if ($validation == false) {
+                        if (isset($naming[$input]))
+                            $input = $naming[$input];
+                        $errors[(string) $input][(string) $rule]['result'] = false;
+                        $errors[(string) $input][(string) $rule]['param'] = $param;
+                    }
                 }
-                /**
-                 * if $closure is an anonymous function
-                 * call it
-                 */ else if (get_class($closure) == 'Closure') {
-                    $validation = $closure(@$inputs[$input]);
-                } else {
-                    throw new Exception('Unknown Rule: "' . $rule . '"');
-                }
-                if ($validation == false) {
-                    if (isset($naming[$input]))
-                        $input = $naming[$input];
-                    $errors[(string)$input][(string)$rule]['result'] = false;
-                    $errors[(string)$input][(string)$rule]['param'] = $param;
-                }
+            } else {
+                throw new Exception("Rules are expected as an Array. Input Name: " . $input);
             }
         }
         return new SimpleValidator($errors);
