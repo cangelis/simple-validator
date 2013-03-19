@@ -28,8 +28,7 @@ class SimpleValidator {
 
     public function getErrors($error_file = 'errors/en.php') {
         if (file_exists($error_file)) {
-            require_once $error_file;
-            $error_texts = errorList();
+            $error_texts = include($error_file);
             foreach ($this->errors as $input_name => $results) {
                 foreach ($results as $rule => $result) {
                     if (isset($error_texts[$rule])) {
@@ -90,8 +89,8 @@ class SimpleValidator {
                 if ($validation == false) {
                     if (isset($naming[$input]))
                         $input = $naming[$input];
-                    $errors[$input][$rule]['result'] = false;
-                    $errors[$input][$rule]['param'] = $param;
+                    $errors[(string)$input][(string)$rule]['result'] = false;
+                    $errors[(string)$input][(string)$rule]['param'] = $param;
                 }
             }
         }

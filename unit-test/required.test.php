@@ -5,7 +5,7 @@ class RequiredTest extends PHPUnit_Framework_TestCase {
     public $rules;
 
     public function setUp() {
-        require_once '../src/simple-validator.class.php';
+        require_once '../simple-validator.class.php';
         $this->rules = array(
             'test' => array('required')
         );
