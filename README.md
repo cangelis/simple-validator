@@ -17,7 +17,7 @@ $rules = array(
         'integer',
     ),
     'email' => array(
-        'required'
+        'required',
         'email'
     )
 );
@@ -38,11 +38,14 @@ Lambda functions make the custom validations easier to be implemented.
 
 ```php
 $rules = array(
-    'name' => array(
-        'my_rule' => function($input) {
-            if ($input == "SimpleValidator")
-                return true;
-            return false;
+    'id' => array(
+        'required',
+        'integer',
+        'post_exists' => function($input) {
+            $query = mysqli_query("SELECT * FROM post WHERE id = ".$input);
+            if (mysqli_num_rows($query) == 0)
+                return false;
+            return true;
         }
     )
 );
@@ -51,7 +54,7 @@ $rules = array(
 and you need to add an error text for your rule to the error file (default: errors/en.php).
 
 ```php
-    'my_rule' => ":attribute field must be SimpleValidator"
+    'post_exists' => "Post does not exist"
 ```
 
 ## Custom Error messages
@@ -73,8 +76,8 @@ $validation_result = SimpleValidator::validate($_POST, $rules, $naming);
 ```
 Output sample:
 
-Name field is required
-Web Site field is required
+* Name field is required <i>instead of "name field is required"</i>
+* Web Site field is required <i>instead of "url field is required"</i>
 
 ## Default validations
 
