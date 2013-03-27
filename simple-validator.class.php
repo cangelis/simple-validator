@@ -91,8 +91,8 @@ class SimpleValidator {
                         throw new Exception('Unknown Rule: "' . $rule . '"');
                     }
                     if ($validation == false) {
-                        if (isset($naming[$input]))
-                            $input = $naming[$input];
+                        if (isset($naming[(string) $input]))
+                            $input = $naming[(string) $input];
                         $errors[(string) $input][(string) $rule]['result'] = false;
                         $errors[(string) $input][(string) $rule]['param'] = $param;
                     }
