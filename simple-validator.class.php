@@ -37,7 +37,7 @@ class SimpleValidator {
                 foreach ($results as $rule => $result) {
                     if (isset($error_texts[$rule])) {
                         $find = array(':attribute', ':input_param');
-                        if (isset($this->namings[$input_name])) {
+                        if (isset($this->namings[(string) $input_name])) {
                             $input_name = $this->namings[$input_name];
                         }
                         $replace = array($input_name, $result['param']);
