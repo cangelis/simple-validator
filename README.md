@@ -42,7 +42,7 @@ $rules = array(
         'required',
         'integer',
         'post_exists' => function($input) {
-            $query = mysqli_query("SELECT * FROM post WHERE id = ".$input);
+            $query = mysqli_query("SELECT * FROM post WHERE id = " . $input);
             if (mysqli_num_rows($query) == 0)
                 return false;
             return true;
@@ -50,11 +50,30 @@ $rules = array(
     )
 );
 ```
-
+    
 and you need to add an error text for your rule to the error file (default: errors/en.php).
 
 ```php
-    'post_exists' => "Post does not exist"
+'post_exists' => "Post does not exist"
+```
+    
+### Another example to understand scoping issue
+
+```php
+// my local variable
+$var_to_compare = "1234";
+$rules = array(
+    'password' => array(
+        'required',
+        'integer',
+        // pass my local variable to anonymous function
+        'is_match' => function($input) use (&$var_to_compare) {
+            if ($var_to_compare == $input)
+                return true;
+            return false;
+        }
+    )
+);
 ```
 
 ## Custom Error messages

@@ -15,14 +15,15 @@
  */
 class SimpleValidator {
 
-    private $errors;
+    private $errors, $namings;
 
     /**
      * Constructor is not allowed because SValidator uses its own
      * static method to instantiate the validaton
      */
-    private function __construct($errors) {
+    private function __construct($errors, $namings) {
         $this->errors = $errors;
+        $this->namings = $namings;
     }
 
     public function isSuccess() {
@@ -36,6 +37,9 @@ class SimpleValidator {
                 foreach ($results as $rule => $result) {
                     if (isset($error_texts[$rule])) {
                         $find = array(':attribute', ':input_param');
+                        if (isset($this->namings[$input_name])) {
+                            $input_name = $this->namings[$input_name];
+                        }
                         $replace = array($input_name, $result['param']);
                         $error_results[] = str_replace($find, $replace, $error_texts[$rule]);
                     } else {
@@ -91,8 +95,6 @@ class SimpleValidator {
                         throw new Exception('Unknown Rule: "' . $rule . '"');
                     }
                     if ($validation == false) {
-                        if (isset($naming[(string) $input]))
-                            $input = $naming[(string) $input];
                         $errors[(string) $input][(string) $rule]['result'] = false;
                         $errors[(string) $input][(string) $rule]['param'] = $param;
                     }
@@ -101,7 +103,7 @@ class SimpleValidator {
                 throw new Exception("Rules are expected as an Array. Input Name: " . $input);
             }
         }
-        return new SimpleValidator($errors);
+        return new SimpleValidator($errors, $naming);
     }
 
     private static function required($input) {
