@@ -56,7 +56,9 @@ and you need to add an error text for your rule to the error file (default: erro
 ```php
 'post_exists' => "Post does not exist"
 ```
-    or add a custom error text for that rule
+    
+or add a custom error text for that rule
+
 ```php
 $validation_result->customErrors(array(
     'post_exists' => 'Post does not exist'
@@ -95,7 +97,7 @@ $validation_result->getErrors('errors/my_errors.php');
 You can add custom errors using customErrors method.
 #### Examples:
 ```php
-$this->customErrors(array(
+$validation_result->customErrors(array(
     // input_name.rule => error text
     'website.required' => 'We need to know your web site',
     // rule => error text
