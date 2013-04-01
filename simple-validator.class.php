@@ -15,10 +15,10 @@
  */
 class SimpleValidator {
 
-    private $errors, $namings;
+    private $errors, $namings, $customErrorsWithInputName, $customErrors;
 
     /**
-     * Constructor is not allowed because SValidator uses its own
+     * Constructor is not allowed because SimpleValidator uses its own
      * static method to instantiate the validaton
      */
     private function __construct($errors, $namings) {
@@ -26,37 +26,84 @@ class SimpleValidator {
         $this->namings = $namings;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function isSuccess() {
         return (empty($this->errors) == true);
     }
 
+    /**
+     * 
+     * @param Array $errors_array
+     */
+    public function customErrors($errors_array) {
+        foreach ($errors_array as $key => $value) {
+            // handle input.rule eg (name.required)
+            if (preg_match("#^(.+?)\.(.+?)$#", $key, $matches)) {
+                // $this->customErrorsWithInputName[name][required] = error message
+                $this->customErrorsWithInputName[(string) $matches[1]][(string) $matches[2]] = $value;
+            } else {
+                $this->customErrors[(string) $key] = $value;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param File $error_file
+     * @return array
+     * @throws Exception
+     */
     public function getErrors($error_file = 'errors/en.php') {
         if (file_exists($error_file)) {
             $error_texts = include($error_file);
-            foreach ($this->errors as $input_name => $results) {
-                foreach ($results as $rule => $result) {
-                    if (isset($error_texts[$rule])) {
-                        $find = array(':attribute', ':input_param');
-                        if (isset($this->namings[(string) $input_name])) {
-                            $input_name = $this->namings[$input_name];
-                        }
-                        $replace = array($input_name, $result['param']);
-                        $error_results[] = str_replace($find, $replace, $error_texts[$rule]);
-                    } else {
-                        throw new Exception("Error text could not found for '" . $rule . "'");
-                    }
-                }
-            }
-            return $error_results;
+        } else {
+            $error_texts = null;
         }
-        else
-            throw new Exception('Error file could not found');
+        foreach ($this->errors as $input_name => $results) {
+            foreach ($results as $rule => $result) {
+                // handle namings
+                if (isset($this->namings[(string) $input_name])) {
+                    $named_input = $this->namings[$input_name];
+                } else {
+                    $named_input = $input_name;
+                }
+                // if there is a custom message with input name, apply it
+                if (isset($this->customErrorsWithInputName[$input_name][$rule])) {
+                    $error_message = $this->customErrorsWithInputName[$input_name][$rule];
+                }
+                // if there is a custom message for the rule, apply it
+                else if (isset($this->customErrors[$rule])) {
+                    $error_message = $this->customErrors[$rule];
+                }
+                // if no custom messages, then fetch from file
+                else if (isset($error_texts[$rule])) {
+                    $error_message = $error_texts[$rule];
+                } else {
+                    throw new Exception("Error text could not found for '" . $rule . "', or Error file could not found");
+                }
+                $find = array(':attribute', ':input_param');
+                $replace = array($named_input, $result['param']);
+                $error_results[] = str_replace($find, $replace, $error_message);
+            }
+        }
+        return $error_results;
     }
 
     public function getResults() {
         return $this->errors;
     }
 
+    /**
+     * 
+     * @param Array $inputs
+     * @param Array $rules
+     * @param array $naming
+     * @return \SimpleValidator
+     * @throws Exception
+     */
     public static function validate($inputs, $rules, $naming = null) {
         $errors = null;
         foreach ($rules as $input => $input_rules) {

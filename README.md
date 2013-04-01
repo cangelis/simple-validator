@@ -56,6 +56,12 @@ and you need to add an error text for your rule to the error file (default: erro
 ```php
 'post_exists' => "Post does not exist"
 ```
+    or add a custom error text for that rule
+```php
+$validation_result->customErrors(array(
+    'post_exists' => 'Post does not exist'
+));
+```
     
 ### Another example to understand scoping issue
 
@@ -78,11 +84,27 @@ $rules = array(
 
 ## Custom Error messages
 
+### Using Error file
 Create a new file to somewhere example: ```errors/my_errors.php```
 and call ```getErrors()``` method using:
 
 ```php
 $validation_result->getErrors('errors/my_errors.php');
+```
+### Using customErrors method
+You can add custom errors using customErrors method.
+#### Examples:
+```php
+$this->customErrors(array(
+    // input_name.rule => error text
+    'website.required' => 'We need to know your web site',
+    // rule => error text
+    'required' => ':attribute field is required',
+    'name.alpha' => 'Name field must contain alphabetical characters',
+    'email_addr.email' => 'Email should be valid',
+    'email_addr.min_length' => 'Hey! Email is shorter than :input_param',
+    'min_length' => ':attribute must be longer than :input_param'
+));
 ```
 ## Naming Inputs
 
