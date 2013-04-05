@@ -9,7 +9,7 @@
  */
 
 /**
- * TODO: user defined functions
+ * TODO: Exception handling for rules with parameters
  * TODO: unit tests for numeric, float, alpha, alpha_numeric, max_length, min_length, exact_length
  * TODO: add protection filters for several input vulnerabilities.
  */
@@ -52,9 +52,9 @@ class SimpleValidator {
 
     /**
      * 
-     * @param File $error_file
+     * @param string $error_file
      * @return array
-     * @throws Exception
+     * @throws SimpleValidatorException
      */
     public function getErrors($error_file = 'errors/en.php') {
         if (file_exists($error_file)) {
@@ -66,23 +66,23 @@ class SimpleValidator {
             foreach ($results as $rule => $result) {
                 // handle namings
                 if (isset($this->namings[(string) $input_name])) {
-                    $named_input = $this->namings[$input_name];
+                    $named_input = $this->namings[(string) $input_name];
                 } else {
                     $named_input = $input_name;
                 }
                 // if there is a custom message with input name, apply it
-                if (isset($this->customErrorsWithInputName[$input_name][$rule])) {
-                    $error_message = $this->customErrorsWithInputName[$input_name][$rule];
+                if (isset($this->customErrorsWithInputName[(string) $input_name][(string) $rule])) {
+                    $error_message = $this->customErrorsWithInputName[(string) $input_name][(string) $rule];
                 }
                 // if there is a custom message for the rule, apply it
-                else if (isset($this->customErrors[$rule])) {
-                    $error_message = $this->customErrors[$rule];
+                else if (isset($this->customErrors[(string) $rule])) {
+                    $error_message = $this->customErrors[(string) $rule];
                 }
                 // if no custom messages, then fetch from file
-                else if (isset($error_texts[$rule])) {
-                    $error_message = $error_texts[$rule];
+                else if (isset($error_texts[(string) $rule])) {
+                    $error_message = $error_texts[(string) $rule];
                 } else {
-                    throw new Exception("Error text could not found for '" . $rule . "', or Error file could not found");
+                    throw new SimpleValidatorException(SimpleValidatorException::NO_ERROR_TEXT, $rule);
                 }
                 $find = array(':attribute', ':input_param');
                 $replace = array($named_input, $result['param']);
@@ -100,9 +100,9 @@ class SimpleValidator {
      * 
      * @param Array $inputs
      * @param Array $rules
-     * @param array $naming
+     * @param Array $naming
      * @return \SimpleValidator
-     * @throws Exception
+     * @throws SimpleValidatorException
      */
     public static function validate($inputs, $rules, $naming = null) {
         $errors = null;
@@ -120,8 +120,13 @@ class SimpleValidator {
                     /**
                      * if the method exists in here call it
                      */
-                    if (@method_exists('SimpleValidator', $rule)) {
-                        $validation = static::$rule(@$inputs[$input]);
+                    if (@method_exists(get_called_class(), $rule)) {
+                        $refl = new ReflectionMethod(get_called_class(), $rule);
+                        if ($refl->isStatic()) {
+                            $validation = static::$rule(@$inputs[(string) $input]);
+                        } else {
+                            throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $rule);
+                        }
                     }
 
                     /**
@@ -129,17 +134,22 @@ class SimpleValidator {
                      * rule(parameter)
                      * eg: max_length(9)
                      */ else if (preg_match("#^([a-zA-Z_]+)\(([a-zA-Z0-9]+)\)$#", $rule, $matches)) {
-                        $validation = $validation = static::$matches[1](@$inputs[$input], $matches[2]);
-                        $param = $matches[2];
-                        $rule = $matches[1];
+                        $refl = new ReflectionMethod(get_called_class(), $matches[1]);
+                        if ($refl->isStatic()) {
+                            $validation = $validation = static::$matches[1](@$inputs[(string) $input], $matches[2]);
+                            $param = $matches[2];
+                            $rule = $matches[1];
+                        } else {
+                            throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $matches[1]);
+                        }
                     }
                     /**
                      * if $closure is an anonymous function
                      * call it
-                     */ else if (get_class($closure) == 'Closure') {
-                        $validation = $closure(@$inputs[$input]);
+                     */ else if (@get_class($closure) == 'Closure') {
+                        $validation = $closure(@$inputs[(string) $input]);
                     } else {
-                        throw new Exception('Unknown Rule: "' . $rule . '"');
+                        throw new SimpleValidatorException(SimpleValidatorException::UNKNOWN_RULE, $rule);
                     }
                     if ($validation == false) {
                         $errors[(string) $input][(string) $rule]['result'] = false;
@@ -147,7 +157,7 @@ class SimpleValidator {
                     }
                 }
             } else {
-                throw new Exception("Rules are expected as an Array. Input Name: " . $input);
+                throw new SimpleValidatorException(SimpleValidatorException::ARRAY_EXPECTED, $input);
             }
         }
         return new SimpleValidator($errors, $naming);

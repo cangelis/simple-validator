@@ -30,7 +30,7 @@ if ($validation_result->isSuccess() == true) {
 }
 ```
 
-## Custom Rules
+## Custom Rules with anonymous functions
 
 Lambda functions make the custom validations easier to be implemented.
 
@@ -83,6 +83,41 @@ $rules = array(
     )
 );
 ```
+
+## Custom Rules with extending SimpleValidator
+
+```php
+require_once 'simple-validator.class.php';
+class MyValidator extends SimpleValidator {
+    // methods have to be static !!!
+    public static function is_awesome($input) {
+        if ($input == "awesome") 
+            return true;
+        return false;
+    }
+    //validation rule with a parameter
+    public static function is_equal($input, $param) {
+        if ($input == $param) 
+            return true;
+        return false;
+    }
+
+}
+```
+
+And then, call the `validate` method.
+   
+```php
+$rules = array(
+    'name' => array(
+        'is_awesome',
+        'is_equal(Michael)'
+    )
+)
+$validation_result = MyValidator::validate($_POST, $rules);
+```
+
+**Note:** Error texts for the rules should be defined as well as the anonymous functions. 
 
 ## Custom Error messages
 
