@@ -1,7 +1,6 @@
 <?php
 
 require_once '../simple-validator.class.php';
-require_once '../simple-validator-exception.class.php';
 
 class CustomValidator extends SimpleValidator {
 
