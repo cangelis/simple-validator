@@ -1,5 +1,5 @@
 <?php
-
+require_once './simple-validator-exception.class.php';
 /**
  * Simple Validator Class for php
  * @author Can Geliş <geliscan@gmail.com>
