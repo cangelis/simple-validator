@@ -12,7 +12,6 @@ require_once 'simple-validator-exception.class.php';
  */
 
 /**
- * TODO: Rule with parameter for lambda functions
  * TODO: Exception handling for rules with parameters
  * TODO: unit tests for numeric, float, alpha, alpha_numeric, max_length, min_length, exact_length
  * TODO: add protection filters for several input vulnerabilities.
@@ -150,7 +149,30 @@ class Validator {
                             throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $rule);
                         }
                     }
-
+                    /**
+                     * if $closure is an anonymous function
+                     * call it
+                     */ else if (@get_class($closure) == 'Closure') {
+                        if (preg_match("#^([a-zA-Z0-9_]+)\((:?[a-zA-Z0-9]+)\)$#", $rule, $matches)) {
+                            /**
+                             * value of a parameter can be a value directly or an input name
+                             * so we need to save both parameter value and real parameter value
+                             */
+                            $real_param_value = $matches[2];
+                            $param = $matches[2];
+                            /**
+                             * Handle parameter with input name
+                             * eg: equals(:name)
+                             */
+                            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $matches[2], $param_type)) {
+                                $param = @$inputs[(string) $param_type[1]];
+                            }
+                            $rule = $matches[1];
+                            $validation = $closure(@$inputs[(string) $input], $param);
+                        }
+                        else
+                            $validation = $closure(@$inputs[(string) $input]);
+                    }
                     /**
                      * method with a parameter
                      * rule(parameter)
@@ -176,12 +198,6 @@ class Validator {
                         } else {
                             throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $matches[1]);
                         }
-                    }
-                    /**
-                     * if $closure is an anonymous function
-                     * call it
-                     */ else if (@get_class($closure) == 'Closure') {
-                        $validation = $closure(@$inputs[(string) $input]);
                     } else {
                         throw new SimpleValidatorException(SimpleValidatorException::UNKNOWN_RULE, $rule);
                     }

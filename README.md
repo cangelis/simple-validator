@@ -53,6 +53,11 @@ $rules = array(
             if (mysqli_num_rows($query) == 0)
                 return false;
             return true;
+        },
+        'special_id(5)' => function($input, $param) {
+            if ($input == $param)
+                return false;
+            return true;
         }
     )
 );
