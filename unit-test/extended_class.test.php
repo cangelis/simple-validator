@@ -2,7 +2,7 @@
 
 require_once '../simple-validator.class.php';
 
-class CustomValidator extends SimpleValidator {
+class CustomValidator extends SimpleValidator\Validator {
 
     public static function trueStaticRule($input) {
         return true;
@@ -36,8 +36,8 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
         );
         try {
             CustomValidator::validate(null, $rules);
-        } catch (SimpleValidatorException $e) {
-            if ($e->getCode() == SimpleValidatorException::STATIC_METHOD)
+        } catch (SimpleValidator\SimpleValidatorException $e) {
+            if ($e->getCode() == SimpleValidator\SimpleValidatorException::STATIC_METHOD)
                 return;
             else
                 $this->fail("Wrong Exception Code: " . $e->getCode());
@@ -54,7 +54,7 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
         try {
             $validation_result = CustomValidator::validate(null, $rules);
             $this->assertTrue($validation_result->isSuccess());
-        } catch (SimpleValidatorException $e) {
+        } catch (SimpleValidator\SimpleValidatorException $e) {
             $this->fail("Exception occured: " . $e->getMessage());
         }
         return;
@@ -69,7 +69,7 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
         try {
             $validation_result = CustomValidator::validate(null, $rules);
             $this->assertFalse($validation_result->isSuccess());
-        } catch (SimpleValidatorException $e) {
+        } catch (SimpleValidator\SimpleValidatorException $e) {
             $this->fail("Exception occured: " . $e->getMessage());
         }
         return;
@@ -84,7 +84,7 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
         try {
             $validation_result = CustomValidator::validate(null, $rules);
             $this->assertTrue($validation_result->isSuccess());
-        } catch (SimpleValidatorException $e) {
+        } catch (SimpleValidator\SimpleValidatorException $e) {
             $this->fail("Exception occured: " . $e->getMessage());
         }
         return;
@@ -98,8 +98,8 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
         );
         try {
             CustomValidator::validate(null, $rules);
-        } catch (SimpleValidatorException $e) {
-            if ($e->getCode() == SimpleValidatorException::STATIC_METHOD)
+        } catch (SimpleValidator\SimpleValidatorException $e) {
+            if ($e->getCode() == SimpleValidator\SimpleValidatorException::STATIC_METHOD)
                 return;
             else
                 $this->fail("Wrong Exception Code: " . $e->getCode());
@@ -108,4 +108,5 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
     }
 
 }
+
 ?>
