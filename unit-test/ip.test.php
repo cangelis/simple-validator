@@ -17,7 +17,7 @@ class IPTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "89.250.130.65"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -25,7 +25,7 @@ class IPTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "89.300.130.65"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -33,7 +33,7 @@ class IPTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "2a03:2880:10:1f02:face:b00c::25"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -41,7 +41,7 @@ class IPTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "Simple Validator"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 

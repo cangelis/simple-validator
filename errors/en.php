@@ -15,5 +15,6 @@ return array(
     'url' => ':attribute must contain a valid URL',
     'max_length' => ':attribute can be maximum :input_param character long',
     'min_length' => ':attribute must be minimum :input_param character long',
-    'exact_length' => ':attribute field must :input_param character long'
+    'exact_length' => ':attribute field must :input_param character long',
+    'equals' => ':attribute field should be same as :input_param'
 );

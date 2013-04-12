@@ -1,6 +1,6 @@
 <?php
 
-class Test extends PHPUnit_Framework_TestCase {
+class EmailTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
         require_once '../simple-validator.class.php';
@@ -15,13 +15,13 @@ class Test extends PHPUnit_Framework_TestCase {
 
     public function testValidEmail() {
         $inputs = array('test' => 'geliscan@gmail.com');
-        $validation_result = SimpleValidator::validate($inputs, $this->rules);
+        $validation_result = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validation_result->isSuccess(), true);
     }
 
     public function testInvalidEmail() {
         $inputs = array('test' => 'SimpleValidator');
-        $validation_result = SimpleValidator::validate($inputs, $this->rules);
+        $validation_result = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validation_result->isSuccess(), false);
     }
 
@@ -29,7 +29,7 @@ class Test extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => ''
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -37,7 +37,7 @@ class Test extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => null
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 

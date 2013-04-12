@@ -19,7 +19,7 @@ class RequiredTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => ''
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -27,7 +27,7 @@ class RequiredTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => null
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -35,19 +35,19 @@ class RequiredTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => ' '
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
     public function testUnassignedInput() {
         $inputs = array();
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
     public function testNullInputArray() {
         $inputs = null;
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 

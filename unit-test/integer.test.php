@@ -15,7 +15,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => 15
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -23,7 +23,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "15"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -31,7 +31,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => 15.5
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -39,7 +39,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => "test12"
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -47,7 +47,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => 0x1A
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -55,7 +55,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => -15
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -63,7 +63,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => 0123
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), true);
     }
 
@@ -71,7 +71,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => 9E19
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -79,7 +79,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => -9E19
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -87,7 +87,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => ''
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 
@@ -95,7 +95,7 @@ class IntegerTest extends PHPUnit_Framework_TestCase {
         $inputs = array(
             'test' => null
         );
-        $validator = SimpleValidator::validate($inputs, $this->rules);
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
         $this->assertEquals($validator->isSuccess(), false);
     }
 

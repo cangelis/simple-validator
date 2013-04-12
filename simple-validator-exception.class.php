@@ -1,6 +1,8 @@
 <?php
 
-class SimpleValidatorException extends Exception {
+namespace SimpleValidator;
+
+class SimpleValidatorException extends \Exception {
 
     const NO_ERROR_TEXT = 1;
     const STATIC_METHOD = 2;

@@ -1,6 +1,6 @@
 # Simple Validator Documentation
 
-Simple validator is an awesome and easy to validator for php
+Simple validator is an awesome and easy to use validator for php
 
 ## A few examples:
 
@@ -19,9 +19,16 @@ $rules = array(
     'email' => array(
         'required',
         'email'
+    ),
+    'password' => array(
+        'required',
+        'equals(:password_verify)'
+    ),
+    'password_verify' => array(
+        'required'
     )
 );
-$validation_result = SimpleValidator::validate($_POST, $rules);
+$validation_result = SimpleValidator\Validator::validate($_POST, $rules);
 if ($validation_result->isSuccess() == true) {
     echo "validation ok";
 } else {
@@ -84,25 +91,32 @@ $rules = array(
 );
 ```
 
-## Custom Rules with extending SimpleValidator
+## Custom Rules that extend SimpleValidator
 
 ```php
+
+namespace SimpleValidator;
+
 require_once 'simple-validator.class.php';
-class MyValidator extends SimpleValidator {
+
+class MyValidator extends Validator {
+
     // methods have to be static !!!
     public static function is_awesome($input) {
-        if ($input == "awesome") 
+        if ($input == "awesome")
             return true;
         return false;
     }
+
     //validation rule with a parameter
     public static function is_equal($input, $param) {
-        if ($input == $param) 
+        if ($input == $param)
             return true;
         return false;
     }
 
 }
+
 ```
 
 And then, call the `validate` method.
@@ -114,7 +128,7 @@ $rules = array(
         'is_equal(Michael)'
     )
 )
-$validation_result = MyValidator::validate($_POST, $rules);
+$validation_result = SimpleValidator\MyValidator::validate($_POST, $rules);
 ```
 
 **Note:** Error texts for the rules should be defined as well as the anonymous functions. 
@@ -148,14 +162,29 @@ $validation_result->customErrors(array(
 ```php
 $naming => array(
     'name' => 'Name',
-    'url' => 'Web Site'
+    'url' => 'Web Site',
+    'password' => 'Password',
+    'password_verify' => 'Password Verification'
 );
-$validation_result = SimpleValidator::validate($_POST, $rules, $naming);
+$validation_result = SimpleValidator\Validator::validate($_POST, $rules, $naming);
 ```
-Output sample:
+#### Output sample:
 
-* Name field is required <i>instead of "name field is required"</i>
-* Web Site field is required <i>instead of "url field is required"</i>
+* Name field is required <i>-instead of "name field is required"-</i>
+* Web Site field is required <i>-instead of "url field is required"-</i>
+* Password field should be same as Password Verification <i>-equals(:password_verify) rule-</i>
+
+## More
+
+You can explicitly check out the validations using `has` method
+    
+
+```php
+// All return boolean
+$validation_result->has('email');
+$validation_result->has('email','required');
+$validation_result->has('password','equals');
+```
 
 ## Default validations
 
@@ -237,5 +266,11 @@ Output sample:
         <td>Yes</td>
         <td>Returns FALSE if the input is not exactly parameter value long</td>
         <td>exact_length(10)</td>
+    </tr>
+    <tr>
+        <td>equals</td>
+        <td>Yes</td>
+        <td>Returns FALSE if the input is not same as the parameter</td>
+        <td>equals(:password_verify) or equals(foo)</td>
     </tr>
 </table>
