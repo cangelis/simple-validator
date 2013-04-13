@@ -1,9 +1,10 @@
 <?php
 
+require_once 'simple-validator.class.php';
+
 class InputNameParamTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
-        require_once '../simple-validator.class.php';
         $this->rules = array(
             'test1' => array('equals(:test2)')
         );

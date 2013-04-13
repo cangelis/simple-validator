@@ -1,9 +1,10 @@
 <?php
 
+require_once 'simple-validator.class.php';
+
 class EmailTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
-        require_once '../simple-validator.class.php';
         $this->rules = array(
             'test' => array('email')
         );

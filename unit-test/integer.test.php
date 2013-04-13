@@ -1,11 +1,12 @@
 <?php
 
+require_once 'simple-validator.class.php';
+
 class IntegerTest extends PHPUnit_Framework_TestCase {
 
     public $rules;
 
     public function setUp() {
-        require_once '../simple-validator.class.php';
         $this->rules = array(
             'test' => array('integer')
         );

@@ -1,9 +1,10 @@
 <?php
 
+require_once 'simple-validator.class.php';
+
 class Test extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
-        require_once '../simple-validator.class.php';
         $this->rules = array(
             'test' => array('url')
         );
@@ -77,22 +78,24 @@ class Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($validator->isSuccess(), true);
     }
 
-    public function testPhoneInput() {
+    /*
+      public function testPhoneInput() {
 
-        $inputs = array(
-            'test' => "tel:+1-816-555-1212"
-        );
-        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
-        $this->assertEquals($validator->isSuccess(), true);
-    }
+      $inputs = array(
+      'test' => "tel:+1-816-555-1212"
+      );
+      $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
+      $this->assertEquals($validator->isSuccess(), true);
+      }
 
-    public function testUrnInput() {
-        $inputs = array(
-            'test' => "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
-        );
-        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
-        $this->assertEquals($validator->isSuccess(), true);
-    }
+      public function testUrnInput() {
+      $inputs = array(
+      'test' => "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
+      );
+      $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
+      $this->assertEquals($validator->isSuccess(), true);
+      }
+     */
 
     public function testAnyStringInput() {
         $inputs = array(
