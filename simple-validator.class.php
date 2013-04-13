@@ -13,7 +13,7 @@ require_once 'simple-validator-exception.class.php';
 
 /**
  * TODO: Exception handling for rules with parameters
- * TODO: unit tests for numeric, float, alpha, alpha_numeric, max_length, min_length, exact_length
+ * TODO: unit tests for numeric, float, alpha_numeric, max_length, min_length, exact_length
  * TODO: add protection filters for several input vulnerabilities.
  */
 class Validator {
