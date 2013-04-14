@@ -59,8 +59,8 @@ class Validator {
      * @throws SimpleValidatorException
      */
     public function getErrors($error_file = 'en') {
-        if (file_exists($error_file)) {
-            $error_texts = include("errors/" . $error_file . ".php");
+        if (file_exists(__DIR__ . "/errors/" . $error_file . ".php")) {
+            $error_texts = include(__DIR__ . "/errors/" . $error_file . ".php");
         } else {
             $error_texts = null;
         }
