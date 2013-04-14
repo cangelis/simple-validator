@@ -7,7 +7,9 @@ Simple validator is an awesome and easy to use validator for php
 
 ## Install
 
-Add this line to `require` in your composer.json:
+### Including to your current composer.json
+
+Add this line into `require` in your ***composer.json***:
 
 ```
 "simple-validator/simple-validator": "dev-master"
@@ -17,6 +19,20 @@ and call
 
 ```
 php composer.phar update
+```
+
+### Installing directly
+
+Download  `composer.phar` and call
+
+```
+php composer.phar install
+```
+
+and use autoload.php to include the classes
+
+```php
+require 'vendor/autoload.php'
 ```
 
 ## A few examples:
