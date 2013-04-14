@@ -1,4 +1,7 @@
+
 # Simple Validator Documentation
+
+[![Build Status](https://travis-ci.org/cangelis/simple-validator.png?branch=master)](https://travis-ci.org/cangelis/simple-validator)
 
 Simple validator is an awesome and easy to use validator for php
 
