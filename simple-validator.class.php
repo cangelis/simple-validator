@@ -2,7 +2,6 @@
 
 namespace SimpleValidator;
 
-require_once 'simple-validator-exception.class.php';
 /**
  * Simple Validator Class for php
  * @author Can Geliş <geliscan@gmail.com>
@@ -59,9 +58,9 @@ class Validator {
      * @return array
      * @throws SimpleValidatorException
      */
-    public function getErrors($error_file = 'errors/en.php') {
+    public function getErrors($error_file = 'en') {
         if (file_exists($error_file)) {
-            $error_texts = include($error_file);
+            $error_texts = include("errors/" . $error_file . ".php");
         } else {
             $error_texts = null;
         }

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'simple-validator.class.php';
+require_once 'vendor/autoload.php';
 
 class Test extends PHPUnit_Framework_TestCase {
 

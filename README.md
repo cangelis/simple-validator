@@ -2,6 +2,14 @@
 
 Simple validator is an awesome and easy to use validator for php
 
+## Install
+
+Download all the files and `composer.phar` and run this command:
+
+```
+php composer.phar install
+```
+
 ## A few examples:
 
 ```php
@@ -141,11 +149,11 @@ $validation_result = SimpleValidator\MyValidator::validate($_POST, $rules);
 ## Custom Error messages
 
 ### Using Error file
-Create a new file to somewhere example: ```errors/my_errors.php```
+Create a new file to somewhere example: ```errors/es.php```
 and call ```getErrors()``` method using:
 
 ```php
-$validation_result->getErrors('errors/my_errors.php');
+$validation_result->getErrors('es');
 ```
 ### Using customErrors method
 You can add custom errors using customErrors method.

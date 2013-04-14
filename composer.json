@@ -1,0 +1,20 @@
+{
+    "name": "simple-validator/simple-validator",
+    "description": "Yet another validation class for PHP",
+    "authors": [
+        {
+            "name": "Can Gelis",
+            "email": "geliscan@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "simple-validator-exception.class.php",
+            "simple-validator.class.php"
+        ]
+    },
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "license": "MIT"
+}
