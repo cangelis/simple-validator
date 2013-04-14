@@ -4,4 +4,9 @@ php:
   - 5.4
   - 5.3
 
+before-script:
+  - curl -s https://getcomposer.org/install > composer.phar
+  - php composer.phar install
+  - rm composer.phar
+
 script: phpunit -c phpunit.xml

@@ -7,10 +7,16 @@ Simple validator is an awesome and easy to use validator for php
 
 ## Install
 
-Download all the files and `composer.phar` and run this command:
+Add this line to `require` in your composer.json:
 
 ```
-php composer.phar install
+"simple-validator/simple-validator": "dev-master"
+```
+
+and call 
+
+```
+php composer.phar update
 ```
 
 ## A few examples:
