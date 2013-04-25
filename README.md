@@ -35,6 +35,15 @@ and use autoload.php to include the classes
 require 'vendor/autoload.php'
 ```
 
+### Without composer
+
+Just include the class files
+
+```php
+require_once "simple-validator.class.php";
+require_once "simple-validator-exception.class.php";
+```
+
 ## A few examples:
 
 ```php
