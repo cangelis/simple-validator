@@ -170,6 +170,10 @@ class Validator {
         foreach ($rules as $input => $input_rules) {
             if (is_array($input_rules)) {
                 foreach ($input_rules as $rule => $closure) {
+                    if (!isset($inputs[(string) $input]) || (empty($inputs[(string) $input])))
+                        $input_value = "";
+                    else
+                        $input_value = $inputs[(string) $input];
                     /**
                      * if the key of the $input_rules is numeric that means
                      * it's neither an anonymous nor an user function.
@@ -181,7 +185,7 @@ class Validator {
                     $params = $real_params = $rule_and_params['params'];
                     $rule = $rule_and_params['rule'];
                     $params = static::getParamValues($params, $inputs);
-                    array_unshift($params, $inputs[(string) $input]);
+                    array_unshift($params, $input_value);
                     /**
                      * Handle anonymous functions
                      */
