@@ -170,8 +170,8 @@ class Validator {
         foreach ($rules as $input => $input_rules) {
             if (is_array($input_rules)) {
                 foreach ($input_rules as $rule => $closure) {
-                    if (!isset($inputs[(string) $input]) || (empty($inputs[(string) $input])))
-                        $input_value = "";
+                    if (!isset($inputs[(string) $input]))
+                        $input_value = null;
                     else
                         $input_value = $inputs[(string) $input];
                     /**
@@ -217,8 +217,8 @@ class Validator {
         return new static($errors, $naming);
     }
 
-    private static function required($input) {
-        return (!empty($input) && (isset($input)) && (trim($input) != ''));
+    private static function required($input = null) {
+        return (!is_null($input) && (trim($input) != ''));
     }
 
     private static function numeric($input) {

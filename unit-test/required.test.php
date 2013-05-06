@@ -50,6 +50,22 @@ class RequiredTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($validator->isSuccess(), false);
     }
 
+    public function testZeroInput() {
+        $inputs = array(
+            'test' => '0'
+        );
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
+        $this->assertEquals($validator->isSuccess(), true);
+    }
+
+    public function testZeroPointZeroInput() {
+        $inputs = array(
+            'test' => 0.0
+        );
+        $validator = SimpleValidator\Validator::validate($inputs, $this->rules);
+        $this->assertEquals($validator->isSuccess(), true);
+    }
+
 }
 
 ?>
