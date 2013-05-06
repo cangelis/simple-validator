@@ -58,9 +58,9 @@ class Validator {
      * @return array
      * @throws SimpleValidatorException
      */
-    public function getErrors($error_file = 'en') {
-        if (file_exists(__DIR__ . "/errors/" . $error_file . ".php")) {
-            $error_texts = include(__DIR__ . "/errors/" . $error_file . ".php");
+    public function getErrors($lang = 'en') {
+        if (file_exists(__DIR__ . "/errors/" . $lang . ".php")) {
+            $error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
         } else {
             $error_texts = null;
         }
@@ -73,11 +73,15 @@ class Validator {
                     $named_input = $input_name;
                 }
                 /**
-                 * if parameter value is an input name it should be named as well
+                 * if parameters are input name they should be named as well
                  */
-                if (preg_match("#^:([a-zA-Z0-9_]+)$#", $result['param'], $param_type)) {
-                    if (isset($this->namings[(string) $param_type[1]]))
-                        $result['param'] = $this->namings[(string) $param_type[1]];
+                foreach ($result['params'] as $key => $param) {
+                    if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
+                        if (isset($this->namings[(string) $param_type[1]]))
+                            $result['params'][$key] = $this->namings[(string) $param_type[1]];
+                        else
+                            $result['params'][$key] = $param_type[1];
+                    }
                 }
                 // if there is a custom message with input name, apply it
                 if (isset($this->customErrorsWithInputName[(string) $input_name][(string) $rule])) {
@@ -93,9 +97,14 @@ class Validator {
                 } else {
                     throw new SimpleValidatorException(SimpleValidatorException::NO_ERROR_TEXT, $rule);
                 }
-                $find = array(':attribute', ':input_param');
-                $replace = array($named_input, $result['param']);
-                $error_results[] = str_replace($find, $replace, $error_message);
+                /**
+                 * handle :params(..)
+                 */
+                if (preg_match_all("#:params\((.+?)\)#", $error_message, $param_indexes))
+                    foreach ($param_indexes[1] as $param_index) {
+                        $error_message = str_replace(":params(" . $param_index . ")", $result['params'][$param_index], $error_message);
+                    }
+                $error_results[] = str_replace(":attribute", $named_input, $error_message);
             }
         }
         return $error_results;
@@ -116,11 +125,44 @@ class Validator {
     }
 
     /**
+     * Gets the parameter names of a rule
+     * @param type $rule
+     * @return mixed
+     */
+    private static function getParams($rule) {
+        if (preg_match("#^([a-zA-Z0-9_]+)\((.+?)\)$#", $rule, $matches)) {
+            return array(
+                'rule' => $matches[1],
+                'params' => explode(",", $matches[2])
+            );
+        }
+        return array(
+            'rule' => $rule,
+            'params' => array()
+        );
+    }
+
+    /**
+     * Handle parameter with input name
+     * eg: equals(:name)
+     * @param mixed $params
+     * @return mixed
+     */
+    private static function getParamValues($params, $inputs) {
+        foreach ($params as $key => $param) {
+            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
+                $params[$key] = @$inputs[(string) $param_type[1]];
+            }
+        }
+        return $params;
+    }
+
+    /**
      * 
      * @param Array $inputs
      * @param Array $rules
      * @param Array $naming
-     * @return \SimpleValidator
+     * @return Validator
      * @throws SimpleValidatorException
      */
     public static function validate($inputs, $rules, $naming = null) {
@@ -128,81 +170,40 @@ class Validator {
         foreach ($rules as $input => $input_rules) {
             if (is_array($input_rules)) {
                 foreach ($input_rules as $rule => $closure) {
-                    $param = null;
-                    $real_param_value = null;
                     /**
                      * if the key of the $input_rules is numeric that means
-                     * it's neither a lambda nor user function.
+                     * it's neither an anonymous nor an user function.
                      */
                     if (is_numeric($rule)) {
                         $rule = $closure;
                     }
+                    $rule_and_params = static::getParams($rule);
+                    $params = $real_params = $rule_and_params['params'];
+                    $rule = $rule_and_params['rule'];
+                    $params = static::getParamValues($params, $inputs);
+                    array_unshift($params, $inputs[(string) $input]);
                     /**
-                     * if the method exists in here call it
+                     * Handle anonymous functions
                      */
-                    if (@method_exists(get_called_class(), $rule)) {
+                    if (@get_class($closure) == 'Closure') {
+                        $refl_func = new \ReflectionFunction($closure);
+                        $validation = $refl_func->invokeArgs($params);
+                    }/**
+                     * handle class methods 
+                     */ else if (@method_exists(get_called_class(), $rule)) {
                         $refl = new \ReflectionMethod(get_called_class(), $rule);
                         if ($refl->isStatic()) {
-                            $validation = static::$rule(@$inputs[(string) $input]);
+                            $refl->setAccessible(true);
+                            $validation = $refl->invokeArgs(null, $params);
                         } else {
                             throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $rule);
-                        }
-                    }
-                    /**
-                     * if $closure is an anonymous function
-                     * call it
-                     */ else if (@get_class($closure) == 'Closure') {
-                        if (preg_match("#^([a-zA-Z0-9_]+)\((:?[a-zA-Z0-9]+)\)$#", $rule, $matches)) {
-                            /**
-                             * value of a parameter can be a value directly or an input name
-                             * so we need to save both parameter value and real parameter value
-                             */
-                            $real_param_value = $matches[2];
-                            $param = $matches[2];
-                            /**
-                             * Handle parameter with input name
-                             * eg: equals(:name)
-                             */
-                            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $matches[2], $param_type)) {
-                                $param = @$inputs[(string) $param_type[1]];
-                            }
-                            $rule = $matches[1];
-                            $validation = $closure(@$inputs[(string) $input], $param);
-                        }
-                        else
-                            $validation = $closure(@$inputs[(string) $input]);
-                    }
-                    /**
-                     * method with a parameter
-                     * rule(parameter)
-                     * eg: max_length(9) or equals(:name)
-                     */ else if (preg_match("#^([a-zA-Z0-9_]+)\((:?[a-zA-Z0-9]+)\)$#", $rule, $matches)) {
-                        $refl = new \ReflectionMethod(get_called_class(), $matches[1]);
-                        if ($refl->isStatic()) {
-                            /**
-                             * value of a parameter can be a value directly or an input name
-                             * so we need to save both parameter value and real parameter value
-                             */
-                            $real_param_value = $matches[2];
-                            $param = $matches[2];
-                            /**
-                             * Handle parameter with input name
-                             * eg: equals(:name)
-                             */
-                            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $matches[2], $param_type)) {
-                                $param = @$inputs[(string) $param_type[1]];
-                            }
-                            $validation = $validation = static::$matches[1](@$inputs[(string) $input], $param);
-                            $rule = $matches[1];
-                        } else {
-                            throw new SimpleValidatorException(SimpleValidatorException::STATIC_METHOD, $matches[1]);
                         }
                     } else {
                         throw new SimpleValidatorException(SimpleValidatorException::UNKNOWN_RULE, $rule);
                     }
                     if ($validation == false) {
                         $errors[(string) $input][(string) $rule]['result'] = false;
-                        $errors[(string) $input][(string) $rule]['param'] = $real_param_value;
+                        $errors[(string) $input][(string) $rule]['params'] = $real_params;
                     }
                 }
             } else {
@@ -272,3 +273,4 @@ class Validator {
     }
 
 }
+

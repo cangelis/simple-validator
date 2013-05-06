@@ -1,7 +1,5 @@
 <?php
 
-require_once 'vendor/autoload.php';
-
 class RequiredTest extends PHPUnit_Framework_TestCase {
 
     public $rules;

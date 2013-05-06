@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit>
-  <testsuites>
-    <testsuite name="SimpleValidator Test Suite">
-      <directory suffix=".test.php">./unit-test</directory>
-    </testsuite>
-  </testsuites>
+<phpunit
+    bootstrap="./unit-test/bootstrap.php"
+>
+    <testsuites>
+        <testsuite name="SimpleValidator Test Suite">
+            <directory suffix=".test.php">./unit-test</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

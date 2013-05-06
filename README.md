@@ -81,7 +81,7 @@ if ($validation_result->isSuccess() == true) {
 
 ## Custom Rules with anonymous functions
 
-Lambda functions make the custom validations easier to be implemented.
+Anonymous functions make the custom validations easier to be implemented. 
 
 ### Example
 
@@ -96,15 +96,15 @@ $rules = array(
                 return false;
             return true;
         },
-        'special_id(5)' => function($input, $param) {
-            if ($input == $param)
+        'between(5,15)' => function($input, $param1, $param2) {
+            if (($input > $param1) && ($input < $param2))
                 return false;
             return true;
         }
     )
 );
 ```
-    
+
 and you need to add an error text for your rule to the error file (default: errors/en.php).
 
 ```php
@@ -180,10 +180,28 @@ $validation_result = SimpleValidator\MyValidator::validate($_POST, $rules);
 
 **Note:** Error texts for the rules should be defined as well as the anonymous functions. 
 
+## Custom Rule parameters
+
+A rule can have multiple parameters. An example:
+
+```php
+$rule = array(
+    'id' => array(
+        'rule1(:input1,:input2,2,5,:input3)' => function($input, $input1, $input2, $value1, $value2, $input3) {
+            // validation here
+        }
+    ),
+    // and so on..
+)
+
+
+```
+
 ## Custom Error messages
 
 ### Using Error file
-Create a new file to somewhere example: ```errors/es.php```
+Custom rules provides localization for the error messages.
+Create a new file under **errors** folder, example: ```errors/es.php```
 and call ```getErrors()``` method using:
 
 ```php

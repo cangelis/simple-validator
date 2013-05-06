@@ -1,7 +1,5 @@
 <?php
 
-require_once 'vendor/autoload.php';
-
 class CustomValidator extends SimpleValidator\Validator {
 
     public static function trueStaticRule($input) {
@@ -22,6 +20,12 @@ class CustomValidator extends SimpleValidator\Validator {
 
     public function testParamRule($input, $param) {
         return true;
+    }
+
+    public static function multipleParams($input, $param1, $param2, $param3) {
+        if (($param1 == 1) && ($param2 == 2) && ($param3 == 3))
+            return true;
+        return false;
     }
 
 }
@@ -105,6 +109,26 @@ class ExtendedClassTest extends PHPUnit_Framework_TestCase {
                 $this->fail("Wrong Exception Code: " . $e->getCode());
         }
         $this->fail("Could not catched Exception");
+    }
+
+    public function testValidMultipleParams() {
+        $rules = array(
+            'name' => array(
+                'multipleParams(1,2,3)'
+            )
+        );
+        $validation = CustomValidator::validate(null, $rules);
+        $this->assertTrue($validation->isSuccess());
+    }
+
+    public function testInvalidMultipleParams() {
+        $rules = array(
+            'name' => array(
+                'multipleParams(3,2,1)'
+            )
+        );
+        $validation = CustomValidator::validate(null, $rules);
+        $this->assertFalse($validation->isSuccess());
     }
 
 }
