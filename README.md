@@ -1,4 +1,3 @@
-
 # Simple Validator Documentation
 
 [![Build Status](https://travis-ci.org/cangelis/simple-validator.png?branch=master)](https://travis-ci.org/cangelis/simple-validator)
@@ -144,8 +143,6 @@ $rules = array(
 
 namespace SimpleValidator;
 
-require_once 'simple-validator.class.php';
-
 class MyValidator extends Validator {
 
     // methods have to be static !!!
@@ -241,7 +238,7 @@ $validation_result = SimpleValidator\Validator::validate($_POST, $rules, $naming
 
 ## More
 
-You can explicitly check out the validations using `has` method
+You can explicitly check out the validations using `has` method that might be useful for Unit Testing purposes.
     
 
 ```php
