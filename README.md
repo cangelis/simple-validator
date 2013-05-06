@@ -97,8 +97,8 @@ $rules = array(
         },
         'between(5,15)' => function($input, $param1, $param2) {
             if (($input > $param1) && ($input < $param2))
-                return false;
-            return true;
+                return true;
+            return false;
         }
     )
 );
@@ -215,8 +215,8 @@ $validation_result->customErrors(array(
     'required' => ':attribute field is required',
     'name.alpha' => 'Name field must contain alphabetical characters',
     'email_addr.email' => 'Email should be valid',
-    'email_addr.min_length' => 'Hey! Email is shorter than :input_param',
-    'min_length' => ':attribute must be longer than :input_param'
+    'email_addr.min_length' => 'Hey! Email is shorter than :params(0)',
+    'min_length' => ':attribute must be longer than :params(0)'
 ));
 ```
 ## Naming Inputs
