@@ -261,11 +261,11 @@ class Validator {
     }
 
     private static function max_length($input, $length) {
-        return (strlen($input) < $length);
+        return (strlen($input) <= $length);
     }
 
     private static function min_length($input, $length) {
-        return (strlen($input) > $length);
+        return (strlen($input) >= $length);
     }
 
     private static function exact_length($input, $length) {
