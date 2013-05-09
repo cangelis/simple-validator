@@ -23,7 +23,7 @@ class Validator {
      * Constructor is not allowed because SimpleValidator uses its own
      * static method to instantiate the validaton
      */
-    private function __construct($errors, $namings) {
+    final private function __construct($errors, $namings) {
         $this->errors = $errors;
         $this->namings = $namings;
     }
@@ -32,7 +32,7 @@ class Validator {
      * 
      * @return boolean
      */
-    public function isSuccess() {
+    final public function isSuccess() {
         return (empty($this->errors) == true);
     }
 
@@ -40,7 +40,7 @@ class Validator {
      * 
      * @param Array $errors_array
      */
-    public function customErrors($errors_array) {
+    final public function customErrors($errors_array) {
         foreach ($errors_array as $key => $value) {
             // handle input.rule eg (name.required)
             if (preg_match("#^(.+?)\.(.+?)$#", $key, $matches)) {
@@ -52,17 +52,31 @@ class Validator {
         }
     }
 
+    protected function getDefaultLang() {
+        return "en";
+    }
+
+    protected function getErrorFilePath($lang) {
+        return null;
+    }
+
     /**
      * 
      * @param string $error_file
      * @return array
      * @throws SimpleValidatorException
      */
-    public function getErrors($lang = 'en') {
+    final public function getErrors($lang = null) {
+        if ($lang == null)
+            $lang = $this->getDefaultLang();
+        /* handle error text file for custom validators */
+        $custom_error_texts = array();
+        if (file_exists($this->getErrorFilePath($lang)))
+            $custom_error_texts = include($this->getErrorFilePath($lang));
+        /* handle default error text file */
+        $default_error_texts = array();
         if (file_exists(__DIR__ . "/errors/" . $lang . ".php")) {
-            $error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
-        } else {
-            $error_texts = null;
+            $default_error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
         }
         foreach ($this->errors as $input_name => $results) {
             foreach ($results as $rule => $result) {
@@ -91,9 +105,13 @@ class Validator {
                 else if (isset($this->customErrors[(string) $rule])) {
                     $error_message = $this->customErrors[(string) $rule];
                 }
-                // if no custom messages, then fetch from file
-                else if (isset($error_texts[(string) $rule])) {
-                    $error_message = $error_texts[(string) $rule];
+                // if there is a custom validator try to fetch from its error file
+                else if (isset($custom_error_texts[(string) $rule])) {
+                    $error_message = $custom_error_texts[(string) $rule];
+                }
+                // if none try to fetch from default error file
+                else if (isset($default_error_texts[(string) $rule])) {
+                    $error_message = $default_error_texts[(string) $rule];
                 } else {
                     throw new SimpleValidatorException(SimpleValidatorException::NO_ERROR_TEXT, $rule);
                 }
@@ -114,13 +132,13 @@ class Validator {
      * 
      * @return boolean
      */
-    public function has($input_name, $rule_name = null) {
+    final public function has($input_name, $rule_name = null) {
         if ($rule_name != null)
             return isset($this->errors[$input_name][$rule_name]);
         return isset($this->errors[$input_name]);
     }
 
-    public function getResults() {
+    final public function getResults() {
         return $this->errors;
     }
 
@@ -129,7 +147,7 @@ class Validator {
      * @param type $rule
      * @return mixed
      */
-    private static function getParams($rule) {
+    final private static function getParams($rule) {
         if (preg_match("#^([a-zA-Z0-9_]+)\((.+?)\)$#", $rule, $matches)) {
             return array(
                 'rule' => $matches[1],
@@ -148,7 +166,7 @@ class Validator {
      * @param mixed $params
      * @return mixed
      */
-    private static function getParamValues($params, $inputs) {
+    final private static function getParamValues($params, $inputs) {
         foreach ($params as $key => $param) {
             if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
                 $params[$key] = @$inputs[(string) $param_type[1]];
@@ -165,7 +183,7 @@ class Validator {
      * @return Validator
      * @throws SimpleValidatorException
      */
-    public static function validate($inputs, $rules, $naming = null) {
+    final public static function validate($inputs, $rules, $naming = null) {
         $errors = null;
         foreach ($rules as $input => $input_rules) {
             if (is_array($input_rules)) {
@@ -217,35 +235,35 @@ class Validator {
         return new static($errors, $naming);
     }
 
-    private static function required($input = null) {
+    protected static function required($input = null) {
         return (!is_null($input) && (trim($input) != ''));
     }
 
-    private static function numeric($input) {
+    protected static function numeric($input) {
         return is_numeric($input);
     }
 
-    private static function email($input) {
+    protected static function email($input) {
         return filter_var($input, FILTER_VALIDATE_EMAIL);
     }
 
-    private static function integer($input) {
+    protected static function integer($input) {
         return is_int($input) || ($input == (string) (int) $input);
     }
 
-    private static function float($input) {
+    protected static function float($input) {
         return is_float($input) || ($input == (string) (float) $input);
     }
 
-    private static function alpha($input) {
+    protected static function alpha($input) {
         return (preg_match("#^[a-zA-Z]+$#", $input) == 1);
     }
 
-    private static function alpha_numeric($input) {
+    protected static function alpha_numeric($input) {
         return (preg_match("#^[a-zA-Z0-9]+$#", $input) == 1);
     }
 
-    private static function ip($input) {
+    protected static function ip($input) {
         return filter_var($input, FILTER_VALIDATE_IP);
     }
 
@@ -256,23 +274,23 @@ class Validator {
      * 
      */
 
-    private static function url($input) {
+    protected static function url($input) {
         return filter_var($input, FILTER_VALIDATE_URL);
     }
 
-    private static function max_length($input, $length) {
+    protected static function max_length($input, $length) {
         return (strlen($input) <= $length);
     }
 
-    private static function min_length($input, $length) {
+    protected static function min_length($input, $length) {
         return (strlen($input) >= $length);
     }
 
-    private static function exact_length($input, $length) {
+    protected static function exact_length($input, $length) {
         return (strlen($input) == $length);
     }
 
-    private static function equals($input, $param) {
+    protected static function equals($input, $param) {
         return ($input == $param);
     }
 

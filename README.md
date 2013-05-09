@@ -137,45 +137,64 @@ $rules = array(
 );
 ```
 
-## Custom Rules that extend SimpleValidator
+## Custom Validators
+
+You can assume SimpleValidator as a tool or an interface to create a validator for yourself.
+
+Custom validators can have their own rules, own error files or default language definitions. In addition, you can override default rules in your custom validator.
 
 ```php
 
-namespace SimpleValidator;
-
-class MyValidator extends Validator {
+class MyValidator extends \SimpleValidator\Validator {
 
     // methods have to be static !!!
-    public static function is_awesome($input) {
+    protected static function is_awesome($input) {
         if ($input == "awesome")
             return true;
         return false;
     }
 
-    //validation rule with a parameter
-    public static function is_equal($input, $param) {
-        if ($input == $param)
-            return true;
-        return false;
+    // overriding a default rule (url)
+    protected static function url($input) {
+        return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $input);
+    }
+
+    // set default language for your validator
+    // if you don't override this method, the default language is "en"
+    protected function getDefaultLang() {
+        return getMyApplicationsDefaultLanguage();
+    }
+
+    // defining error files for your validator
+    // in this example your files should live in "{class_path}/errors/{language}/validator.php
+    protected function getErrorFilePath($lang) {
+        return __DIR__ . "/errors/" . $lang . "/validator.php";
     }
 
 }
 
 ```
 
+**Create an error file:**
+
+```php
+return array(
+    'is_awesome' => 'the :attribute is not awesome'
+    // error text for url is already defined in default error text file you don't have to define it here, but optionally you can
+);
+```
+
 And then, call the `validate` method.
    
 ```php
 $rules = array(
-    'name' => array(
+    'website' => array(
         'is_awesome',
-        'is_equal(Michael)'
+        'url'
     )
 )
-$validation_result = SimpleValidator\MyValidator::validate($_POST, $rules);
+$validation_result = MyValidator::validate($_POST, $rules);
 ```
-
-**Note:** Error texts for the rules should be defined as well as the anonymous functions. 
 
 ## Custom Rule parameters
 
