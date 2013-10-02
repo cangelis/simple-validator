@@ -8,10 +8,7 @@
         }
     ],
     "autoload": {
-        "classmap": [
-            "simple-validator-exception.class.php",
-            "simple-validator.class.php"
-        ]
+        "psr-0": {"SimpleValidator\\": "src/"}
     },
     "require": {
         "php": ">=5.3.0"

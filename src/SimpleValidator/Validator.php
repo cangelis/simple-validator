@@ -60,6 +60,44 @@ class Validator {
         return null;
     }
 
+    final protected function getDefaultErrorTexts($lang = null) {
+        /* handle default error text file */
+        $default_error_texts = array();
+        if (file_exists(__DIR__ . "/errors/" . $lang . ".php")) {
+            $default_error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
+        }
+        return $default_error_texts;
+    }
+
+    final protected function getCustomErrorTexts($lang = null) {
+        /* handle error text file for custom validators */
+        $custom_error_texts = array();
+        if (file_exists($this->getErrorFilePath($lang)))
+            $custom_error_texts = include($this->getErrorFilePath($lang));
+        return $custom_error_texts;
+    }
+
+    final protected function handleNaming($input_name) {
+        if (isset($this->namings[(string) $input_name])) {
+            $named_input = $this->namings[(string) $input_name];
+        } else {
+            $named_input = $input_name;
+        }
+        return $named_input;
+    }
+
+    final protected function handleParameterNaming($params) {
+        foreach ($params as $key => $param) {
+            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
+                if (isset($this->namings[(string) $param_type[1]]))
+                    $params[$key] = $this->namings[(string) $param_type[1]];
+                else
+                    $params[$key] = $param_type[1];
+            }
+        }
+        return $params;
+    }
+
     /**
      * 
      * @param string $error_file
@@ -69,34 +107,16 @@ class Validator {
     final public function getErrors($lang = null) {
         if ($lang == null)
             $lang = $this->getDefaultLang();
-        /* handle error text file for custom validators */
-        $custom_error_texts = array();
-        if (file_exists($this->getErrorFilePath($lang)))
-            $custom_error_texts = include($this->getErrorFilePath($lang));
-        /* handle default error text file */
-        $default_error_texts = array();
-        if (file_exists(__DIR__ . "/errors/" . $lang . ".php")) {
-            $default_error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
-        }
+
+        $default_error_texts = $this->getDefaultErrorTexts($lang);
+        $custom_error_texts = $this->getCustomErrorTexts($lang);
         foreach ($this->errors as $input_name => $results) {
             foreach ($results as $rule => $result) {
-                // handle namings
-                if (isset($this->namings[(string) $input_name])) {
-                    $named_input = $this->namings[(string) $input_name];
-                } else {
-                    $named_input = $input_name;
-                }
+                $named_input = $this->handleNaming($input_name);
                 /**
                  * if parameters are input name they should be named as well
                  */
-                foreach ($result['params'] as $key => $param) {
-                    if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
-                        if (isset($this->namings[(string) $param_type[1]]))
-                            $result['params'][$key] = $this->namings[(string) $param_type[1]];
-                        else
-                            $result['params'][$key] = $param_type[1];
-                    }
-                }
+                $result['params'] = $this->handleParameterNaming($result['params']);
                 // if there is a custom message with input name, apply it
                 if (isset($this->customErrorsWithInputName[(string) $input_name][(string) $rule])) {
                     $error_message = $this->customErrorsWithInputName[(string) $input_name][(string) $rule];
