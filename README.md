@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/cangelis/simple-validator.png?branch=master)](https://travis-ci.org/cangelis/simple-validator)
 
-Simple validator is an awesome and easy to use validator for php
+Validation is the process that checks for correctness, meaningfulness and security of the input data. 
+SimpleValidator is a library that handles validation process easily.
 
 ## Install
 
@@ -32,15 +33,6 @@ and use autoload.php to include the classes
 
 ```php
 require 'vendor/autoload.php'
-```
-
-### Without composer
-
-Just include the class files
-
-```php
-require_once "simple-validator.class.php";
-require_once "simple-validator-exception.class.php";
 ```
 
 ## A few examples:
