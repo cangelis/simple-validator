@@ -63,8 +63,8 @@ class Validator {
     final protected function getDefaultErrorTexts($lang = null) {
         /* handle default error text file */
         $default_error_texts = array();
-        if (file_exists(__DIR__ . "/errors/" . $lang . ".php")) {
-            $default_error_texts = include(__DIR__ . "/errors/" . $lang . ".php");
+        if (file_exists(__DIR__ . "/../../errors/" . $lang . ".php")) {
+            $default_error_texts = include(__DIR__ . "/../../errors/" . $lang . ".php");
         }
         return $default_error_texts;
     }
