@@ -17,19 +17,22 @@ namespace SimpleValidator;
  */
 class Validator {
 
-    private $errors, $namings, $customErrorsWithInputName, $customErrors;
+    private $errors = array();
+    private $namings = array();
+    private $customErrorsWithInputName = array();
+    private $customErrors = array();
 
     /**
      * Constructor is not allowed because SimpleValidator uses its own
      * static method to instantiate the validaton
      */
     final private function __construct($errors, $namings) {
-        $this->errors = $errors;
-        $this->namings = $namings;
+        $this->errors  = (array) $errors;
+        $this->namings = (array) $namings;
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
     final public function isSuccess() {
@@ -37,7 +40,7 @@ class Validator {
     }
 
     /**
-     * 
+     *
      * @param Array $errors_array
      */
     final public function customErrors($errors_array) {
@@ -99,7 +102,7 @@ class Validator {
     }
 
     /**
-     * 
+     *
      * @param string $error_file
      * @return array
      * @throws SimpleValidatorException
@@ -108,6 +111,7 @@ class Validator {
         if ($lang == null)
             $lang = $this->getDefaultLang();
 
+        $error_results = array();
         $default_error_texts = $this->getDefaultErrorTexts($lang);
         $custom_error_texts = $this->getCustomErrorTexts($lang);
         foreach ($this->errors as $input_name => $results) {
@@ -149,7 +153,7 @@ class Validator {
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
     final public function has($input_name, $rule_name = null) {
@@ -196,7 +200,7 @@ class Validator {
     }
 
     /**
-     * 
+     *
      * @param Array $inputs
      * @param Array $rules
      * @param Array $naming
@@ -231,7 +235,7 @@ class Validator {
                         $refl_func = new \ReflectionFunction($closure);
                         $validation = $refl_func->invokeArgs($params);
                     }/**
-                     * handle class methods 
+                     * handle class methods
                      */ else if (@method_exists(get_called_class(), $rule)) {
                         $refl = new \ReflectionMethod(get_called_class(), $rule);
                         if ($refl->isStatic()) {
@@ -288,10 +292,10 @@ class Validator {
     }
 
     /*
-     * TODO: need improvements for tel and urn urls. 
+     * TODO: need improvements for tel and urn urls.
      * check out url.test.php for the test result
      * urn syntax: http://www.faqs.org/rfcs/rfc2141.html
-     * 
+     *
      */
 
     protected static function url($input) {
@@ -315,4 +319,3 @@ class Validator {
     }
 
 }
-
