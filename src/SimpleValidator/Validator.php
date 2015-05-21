@@ -26,7 +26,7 @@ class Validator {
      * Constructor is not allowed because SimpleValidator uses its own
      * static method to instantiate the validaton
      */
-    final private function __construct($errors, $namings) {
+    private function __construct($errors, $namings) {
         $this->errors  = (array) $errors;
         $this->namings = (array) $namings;
     }
@@ -35,7 +35,7 @@ class Validator {
      *
      * @return boolean
      */
-    final public function isSuccess() {
+    public function isSuccess() {
         return (empty($this->errors) == true);
     }
 
@@ -43,7 +43,7 @@ class Validator {
      *
      * @param Array $errors_array
      */
-    final public function customErrors($errors_array) {
+    public function customErrors($errors_array) {
         foreach ($errors_array as $key => $value) {
             // handle input.rule eg (name.required)
             if (preg_match("#^(.+?)\.(.+?)$#", $key, $matches)) {
@@ -63,7 +63,7 @@ class Validator {
         return null;
     }
 
-    final protected function getDefaultErrorTexts($lang = null) {
+    protected function getDefaultErrorTexts($lang = null) {
         /* handle default error text file */
         $default_error_texts = array();
         if (file_exists(__DIR__ . "/../../errors/" . $lang . ".php")) {
@@ -72,7 +72,7 @@ class Validator {
         return $default_error_texts;
     }
 
-    final protected function getCustomErrorTexts($lang = null) {
+    protected function getCustomErrorTexts($lang = null) {
         /* handle error text file for custom validators */
         $custom_error_texts = array();
         if (file_exists($this->getErrorFilePath($lang)))
@@ -80,7 +80,7 @@ class Validator {
         return $custom_error_texts;
     }
 
-    final protected function handleNaming($input_name) {
+    protected function handleNaming($input_name) {
         if (isset($this->namings[(string) $input_name])) {
             $named_input = $this->namings[(string) $input_name];
         } else {
@@ -89,7 +89,7 @@ class Validator {
         return $named_input;
     }
 
-    final protected function handleParameterNaming($params) {
+    protected function handleParameterNaming($params) {
         foreach ($params as $key => $param) {
             if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
                 if (isset($this->namings[(string) $param_type[1]]))
@@ -107,7 +107,7 @@ class Validator {
      * @return array
      * @throws SimpleValidatorException
      */
-    final public function getErrors($lang = null) {
+    public function getErrors($lang = null) {
         if ($lang == null)
             $lang = $this->getDefaultLang();
 
@@ -156,7 +156,7 @@ class Validator {
      *
      * @return boolean
      */
-    final public function has($input_name, $rule_name = null) {
+    public function has($input_name, $rule_name = null) {
         if ($rule_name != null)
             return isset($this->errors[$input_name][$rule_name]);
         return isset($this->errors[$input_name]);
@@ -171,7 +171,7 @@ class Validator {
      * @param type $rule
      * @return mixed
      */
-    final private static function getParams($rule) {
+    private static function getParams($rule) {
         if (preg_match("#^([a-zA-Z0-9_]+)\((.+?)\)$#", $rule, $matches)) {
             return array(
                 'rule' => $matches[1],
@@ -190,7 +190,7 @@ class Validator {
      * @param mixed $params
      * @return mixed
      */
-    final private static function getParamValues($params, $inputs) {
+    private static function getParamValues($params, $inputs) {
         foreach ($params as $key => $param) {
             if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
                 $params[$key] = @$inputs[(string) $param_type[1]];
@@ -207,7 +207,7 @@ class Validator {
      * @return Validator
      * @throws SimpleValidatorException
      */
-    final public static function validate($inputs, $rules, $naming = null) {
+    public static function validate($inputs, $rules, $naming = null) {
         $errors = null;
         foreach ($rules as $input => $input_rules) {
             if (is_array($input_rules)) {
