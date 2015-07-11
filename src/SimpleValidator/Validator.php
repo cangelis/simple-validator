@@ -280,11 +280,11 @@ class Validator {
     }
 
     protected static function alpha($input) {
-        return (preg_match("#^[a-zA-Z]+$#", $input) == 1);
+        return (preg_match("#^[a-zA-ZÀ-ÿ]+$#", $input) == 1);
     }
 
     protected static function alpha_numeric($input) {
-        return (preg_match("#^[a-zA-Z0-9]+$#", $input) == 1);
+        return (preg_match("#^[a-zA-ZÀ-ÿ0-9]+$#", $input) == 1);
     }
 
     protected static function ip($input) {
