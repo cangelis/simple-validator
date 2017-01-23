@@ -12,7 +12,7 @@ SimpleValidator is a library that handles validation process easily.
 Add this line into `require` in your ***composer.json***:
 
 ```
-"simple-validator/simple-validator": "dev-master"
+"simple-validator/simple-validator": "1.0.*"
 ```
 
 and call 
