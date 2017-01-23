@@ -17,10 +17,10 @@ namespace SimpleValidator;
  */
 class Validator {
 
-    private $errors = array();
-    private $namings = array();
-    private $customErrorsWithInputName = array();
-    private $customErrors = array();
+    protected $errors = array();
+    protected $namings = array();
+    protected $customErrorsWithInputName = array();
+    protected $customErrors = array();
 
     /**
      * Constructor is not allowed because SimpleValidator uses its own
