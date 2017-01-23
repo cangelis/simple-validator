@@ -231,7 +231,7 @@ class Validator {
                     /**
                      * Handle anonymous functions
                      */
-                    if (@get_class($closure) == 'Closure') {
+                    if(is_object($closure) && get_class($closure) == 'Closure') {
                         $refl_func = new \ReflectionFunction($closure);
                         $validation = $refl_func->invokeArgs($params);
                     }/**
