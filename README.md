@@ -39,28 +39,28 @@ require 'vendor/autoload.php'
 
 ```php
 <?php
-$rules = array(
-    'name' => array(
+$rules = [
+    'name' => [
         'required',
         'alpha',
         'max_length(50)'
-    ),
-    'age' => array(
+    ],
+    'age' => [
         'required',
         'integer',
-    ),
-    'email' => array(
+    ],
+    'email' => [
         'required',
         'email'
-    ),
-    'password' => array(
+    ],
+    'password' => [
         'required',
         'equals(:password_verify)'
-    ),
-    'password_verify' => array(
+    ],
+    'password_verify' => [
         'required'
-    )
-);
+    ]
+];
 $validation_result = SimpleValidator\Validator::validate($_POST, $rules);
 if ($validation_result->isSuccess() == true) {
     echo "validation ok";
@@ -77,8 +77,8 @@ Anonymous functions make the custom validations easier to be implemented.
 ### Example
 
 ```php
-$rules = array(
-    'id' => array(
+$rules = [
+    'id' => [
         'required',
         'integer',
         'post_exists' => function($input) {
@@ -92,8 +92,8 @@ $rules = array(
                 return true;
             return false;
         }
-    )
-);
+    ]
+];
 ```
 
 and you need to add an error text for your rule to the error file (default: errors/en.php).
@@ -105,9 +105,9 @@ and you need to add an error text for your rule to the error file (default: erro
 or add a custom error text for that rule
 
 ```php
-$validation_result->customErrors(array(
+$validation_result->customErrors([
     'post_exists' => 'Post does not exist'
-));
+]);
 ```
     
 ### Another example to understand scoping issue
@@ -115,8 +115,8 @@ $validation_result->customErrors(array(
 ```php
 // my local variable
 $var_to_compare = "1234";
-$rules = array(
-    'password' => array(
+$rules = [
+    'password' => [
         'required',
         'integer',
         // pass my local variable to anonymous function
@@ -125,8 +125,8 @@ $rules = array(
                 return true;
             return false;
         }
-    )
-);
+    ]
+];
 ```
 
 ## Custom Validators
@@ -170,21 +170,21 @@ class MyValidator extends \SimpleValidator\Validator {
 **Create an error file:**
 
 ```php
-return array(
+return [
     'is_awesome' => 'the :attribute is not awesome'
     // error text for url is already defined in default error text file you don't have to define it here, but optionally you can
-);
+];
 ```
 
 And then, call the `validate` method.
    
 ```php
-$rules = array(
-    'website' => array(
+$rules = [
+    'website' => [
         'is_awesome',
         'url'
-    )
-)
+    ]
+];
 $validation_result = MyValidator::validate($_POST, $rules);
 ```
 
@@ -193,14 +193,14 @@ $validation_result = MyValidator::validate($_POST, $rules);
 A rule can have multiple parameters. An example:
 
 ```php
-$rule = array(
-    'id' => array(
+$rule = [
+    'id' => [
         'rule1(:input1,:input2,2,5,:input3)' => function($input, $input1, $input2, $value1, $value2, $input3) {
             // validation here
         }
-    ),
+    ],
     // and so on..
-)
+];
 
 
 ```
@@ -219,7 +219,7 @@ $validation_result->getErrors('es');
 You can add custom errors using customErrors method.
 #### Examples:
 ```php
-$validation_result->customErrors(array(
+$validation_result->customErrors([
     // input_name.rule => error text
     'website.required' => 'We need to know your web site',
     // rule => error text
@@ -228,17 +228,17 @@ $validation_result->customErrors(array(
     'email_addr.email' => 'Email should be valid',
     'email_addr.min_length' => 'Hey! Email is shorter than :params(0)',
     'min_length' => ':attribute must be longer than :params(0)'
-));
+]);
 ```
 ## Naming Inputs
 
 ```php
-$naming => array(
+$naming => [
     'name' => 'Name',
     'url' => 'Web Site',
     'password' => 'Password',
     'password_verify' => 'Password Verification'
-);
+];
 $validation_result = SimpleValidator\Validator::validate($_POST, $rules, $naming);
 ```
 #### Output sample:
