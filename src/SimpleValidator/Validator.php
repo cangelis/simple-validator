@@ -192,7 +192,7 @@ class Validator {
      */
     private static function getParamValues($params, $inputs) {
         foreach ($params as $key => $param) {
-            if (preg_match("#^:([a-zA-Z0-9_]+)$#", $param, $param_type)) {
+            if (preg_match("#^:([\[\]a-zA-Z0-9_]+)$#", $param, $param_type)) {
                 $params[$key] = @$inputs[(string) $param_type[1]];
             }
         }
